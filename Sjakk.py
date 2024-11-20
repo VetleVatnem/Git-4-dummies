@@ -1,14 +1,14 @@
+
+#testet OK
 def make_board():
-    filsti = r'C:\\Users\\vetle\\OneDrive\\Skolegang\\Universitet\\Elektronisk systemdesign & innovasjon\\1. Semester\\TDT 4110 Informasjonsteknologi grunnkurs\\Spill\\sjakkbrett'
-    
+        
     try:
-        with open(filsti , 'r') as sjakkbrett:
+        with open('sjakkbrett.txt' , 'r') as sjakkbrett:
             gammelt_nytt = sjakkbrett.readlines() 
             gammelt_nytt = [gammelt_nytt[i].replace('.' , ' ').split(',') for i in range(len(gammelt_nytt))]
-
-        rader_ny = [[gammelt_nytt[i][1]]for i in range(8)]
-        rader_start = [[gammelt_nytt[i][0]] for i in range(8)]
-            
+        
+        rader_ny = [[gammelt_nytt[j][1][i] for i in range(8)] for j in range(8)]
+        rader_start = [[gammelt_nytt[j][0][i] for i in range(8)] for j in range(8)]
         return rader_start , rader_ny
     
     except FileNotFoundError:
@@ -21,6 +21,7 @@ def make_board():
         print(f'Error reading file: {e}')
         return 1,1
 
+#Denne må fikses.
 def lagre_brett(rader_gammel , rader_ny):
     streng_gammel = ''.join(rader_gammel[i][j] for i in range(8) for j in range(8))
     streng_ny = ''.join(rader_ny[i][j] for i in range(8) for j in range(8))
@@ -28,14 +29,14 @@ def lagre_brett(rader_gammel , rader_ny):
     with ('sjakkbrett.txt' , 'w') as sjakkbrett:
         sjakkbrett = streng_gammel + ',' + streng_ny
 
+#testet OK
 def omgjoring_til_indeks(a):
-    a = a.split(',')
-    a = [a[i].lowercase() for i in range(len(a))]
+    b = [a[i] for i in range(len(a))]
     bokstav = ['a','b','c','d','e','f','g','h']
     tall_liste = [7-i for i in range(8)]
 
-    x_faktisk = bokstav.indeks(a[0] - 1) + 1
-    y_faktisk = a[1]
+    x_faktisk = bokstav.index(b[0])
+    y_faktisk = int(a[1])
 
     #omgjøring til indeks i en 2d liste
     x = x_faktisk 
@@ -43,6 +44,7 @@ def omgjoring_til_indeks(a):
 
     return (x , y)
 
+#testet OK
 def er_hvit(koordinat , brett):
     x,y = koordinat
 
@@ -51,54 +53,62 @@ def er_hvit(koordinat , brett):
     else:
         return False
 
-
 #BONDE LOGIKK
+#testet OK
 def skjekk_om_bonde_kan_slå(koordinat , brett):
     x,y = koordinat
-
     kan_slå_koordinater = []
 
-    if x < 6 or x < 1:
+    if x < 7 and x > 0:
         for i in range(2):
-            if er_hvit((x-1 + 2*i , y+1) , brett) == False:
-                kan_slå_koordinater.append([x-1+2*i,y+1])
+            if er_hvit((x-1 + 2*i , y-1) , brett) == False and brett[y-1][x-1 + 2*i] != ' ':
+                kan_slå_koordinater.append((x-1+2*i,y-1))
     elif x == 7:
-        if er_hvit((x-1 , y+1) , brett) == False:
-            kan_slå_koordinater.append([x-1,y+1])
+        if er_hvit((x-1 , y-1) , brett) == False and brett[y-1][x-1] != ' ':
+            kan_slå_koordinater.append((x-1,y-1))
     else:
-        if er_hvit((x+1 , y+1) , brett) == False:
-            kan_slå_koordinater.append([x+1,y+1])
-    
+        if er_hvit((x+1 , y-1) , brett) == False and brett[y-1][x+1] != ' ':
+            kan_slå_koordinater.append((x+1,y-1))
+
     return kan_slå_koordinater
 
+#testet OK
 def bonde_kan_gå_frem(koordinat , brett):
     x,y = koordinat
-    gyldig_trekk = []
-
-    if y == 1 and brett[y+2][x] == ' ':
-        gyldig_trekk.append([x , y+2])
     
-    elif brett[y+1][x] == ' ':
-        gyldig_trekk.append([x , y+1])
+    gyldig_trekk = []
+    
+    if y == 6 and brett[y-2][x] == ' ' and brett[y-1][x] == ' ':
+        gyldig_trekk.append((x , y-2))
+        gyldig_trekk.append((x , y-1))
+    
+    elif brett[y-1][x] == ' ':
+        gyldig_trekk.append((x , y-1))
     
     else:
-        gyldige_trekk = []
-    
+        gyldig_trekk = []
     return gyldig_trekk
 
+#testet OK
 def bonde_hvit(koordinat , brett):
     x,y = koordinat
     lovlige_trekk = []
     try:
-        lovlige_trekk.append(skjekk_om_bonde_kan_slå((x,y) , brett))
-        lovlige_trekk.append(bonde_kan_gå_frem((x,y) , brett))
+        a = skjekk_om_bonde_kan_slå((x,y) , brett)
+        b = bonde_kan_gå_frem((x,y) , brett)
 
+        for i in range(len(a)):
+            lovlige_trekk.append(a[i])
+        for j in range(len(b)):
+            lovlige_trekk.append(b[j])
+        
         return lovlige_trekk
 
     except:
         print('Error executing bonde_hvit')
     
 #MAIN FUNKSJONER OG HJELPEFUNKSJONER
+#testet OK
 def get_piece(koordinat , brett):
     
     x , y = koordinat
@@ -122,30 +132,31 @@ def main():
             loop = False
         else:
             loop = True
-            
-    else:
-        print('Neivel...ingenting da')
 
     while loop == True:
-        brikke_streng = omgjoring_til_indeks(str(input('Hvilket brikke vil du flytte? Skriv lagre hvis du vil fortsette senere og ikke lagre hvis du vil starte på nytt')))
+        print(brett)
+        brikke_streng = str(input('Hvilket brikke vil du flytte? Skriv lagre hvis du vil fortsette senere og ikke lagre hvis du vil starte på nytt'))
         flytte_streng = omgjoring_til_indeks(str(input('Hvor vil du flytte denne brikken?')))
-
+        
         if brikke_streng.lower() == 'lagre':
             loop = False
 
         else:
+            brikke_streng = omgjoring_til_indeks(brikke_streng)
             brikke = get_piece(brikke_streng , brett)
             hvit = er_hvit(brikke_streng , brett)
-
+            
             if brikke == 'B' and hvit == True:
                 gyldige_trekk = bonde_hvit(brikke_streng , brett)
 
                 if flytte_streng in gyldige_trekk:
-                    brett[flytte_streng[1]][flytte_streng[0]].replace(brikke)
-                    brett[brikke_streng[1]][brikke_streng[0]].replace(' ')
+                    x,y = flytte_streng
+                    x_1 , y_1 = brikke_streng
+                    brett[y][x] = brikke 
+                    brett[y_1][x_1] = ' '
                 else:
                     print('Ugyldig trekk') 
-        
-        lagre_brett(brett_orginal , brett)
+            
+        #lagre_brett(brett_orginal , brett)
 
 main()
