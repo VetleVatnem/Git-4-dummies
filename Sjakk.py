@@ -61,13 +61,13 @@ def skjekk_om_bonde_kan_slå(koordinat , brett):
 
     if x < 7 and x > 0:
         for i in range(2):
-            if er_hvit((x-1 + 2*i , y-1) , brett) == False and brett[y-1][x-1 + 2*i] != ' ':
+            if er_hvit((x-1 + 2*i , y-1) , brett) == False and brett[y-1][x-1 + 2*i] != ' ' and get_piece((x-i + 2*i , y-1) , brett) != 'k':
                 kan_slå_koordinater.append((x-1+2*i,y-1))
     elif x == 7:
-        if er_hvit((x-1 , y-1) , brett) == False and brett[y-1][x-1] != ' ':
+        if er_hvit((x-1 , y-1) , brett) == False and brett[y-1][x-1] != ' ' and get_piece((x-1 , y-1) , brett) != 'k':
             kan_slå_koordinater.append((x-1,y-1))
     else:
-        if er_hvit((x+1 , y-1) , brett) == False and brett[y-1][x+1] != ' ':
+        if er_hvit((x+1 , y-1) , brett) == False and brett[y-1][x+1] != ' ' and get_piece((x+1 , y-1) , brett) != 'k':
             kan_slå_koordinater.append((x+1,y-1))
 
     return kan_slå_koordinater
@@ -106,9 +106,52 @@ def bonde_hvit(koordinat , brett):
 
     except:
         print('Error executing bonde_hvit')
+
+#TÅRN LOGIKK
+def skann_brett(koordinat , brett , opp , høyre):
+    x , y = koordinat
     
+    if opp == True:
+        for i in range()
+
+
+    elif opp == False:
+
+    elif høyre == True:
+    
+    else:
+
+def tårn_hvit(koordinat , brett):
+    x , y = koordinat
+
+    gyldige_trekk = []
+
+    #Skjekker gyldige trekk i y retning
+    for i in range(7 - y):
+        if brett[y - i][x] == ' ' or er_hvit((x , y-i) , brett):
+            gyldige_trekk.append((x , y-i))
+
+        if brett[y + i][x] == ' ' or er_hvit((x , y+i) , brett):
+            gyldige_trekk.append((x , y+i))
+
+    #Skjekker gyldige trekk i x retning
+    for i in range(7 - x):
+
 #MAIN FUNKSJONER OG HJELPEFUNKSJONER
 #testet OK
+def utskrift(brett):
+    linjer = []
+    for j in range(len(brett)):
+        linjer.append(' '.join(brett[j][i] for i in range(len(brett[j]))))
+
+    tall = [str(i+1)for i in range(8)]
+    rader = [tall[7-i] for i in range(len(tall))]
+
+    for i in range(len(linjer)):
+        print(rader[i] + ' | ' + linjer[i] )       
+    print('   ' + '-'*(16))
+    print('    ' + 'A ' + 'B ' + 'C ' + 'D ' + 'E ' + 'F ' + 'G ' + 'H ')
+
 def get_piece(koordinat , brett):
     
     x , y = koordinat
@@ -116,6 +159,7 @@ def get_piece(koordinat , brett):
     
     return brikke
 
+#testet OK
 def main():
     ny_eller_gammel = str.lower((input('For å fortsette med forrgie skriv: "Fortsett"\nFor å starte ny skriv:             "Ny"')))
 
@@ -134,7 +178,7 @@ def main():
             loop = True
 
     while loop == True:
-        print(brett)
+        utskrift(brett)
         brikke_streng = str(input('Hvilket brikke vil du flytte? Skriv lagre hvis du vil fortsette senere og ikke lagre hvis du vil starte på nytt'))
         flytte_streng = omgjoring_til_indeks(str(input('Hvor vil du flytte denne brikken?')))
         
