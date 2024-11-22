@@ -54,23 +54,25 @@ def skjekk_rader(a):
     y , x = np.shape(a)
 
     for j in range(x - 3):    
-        for i in range(len(a)):
+        for i in range(y):
             if a[i][j] == a[i][j+1] == a[i][j+2] == a[i][j+3] == 'R':
                 print('Rød vant')
                 return True
-            if a[i][j] == a[i][j+1] == a[i][j+2] == a[i][j+3] == 'Y':
+
+            elif a[i][j] == a[i][j+1] == a[i][j+2] == a[i][j+3] == 'Y':
                 print('Gul vant')
                 return True
+
     return False
  
 def skjekk_diagonal(a):
     
     for i in range(3):
         for j in range(4):
-            if a[i][j] == a[i+1][j+1] == a[i+2][j+2] == a[i+3][j+3] == 'R' or a[i][6-i] == a[i+1][5-i] == a[i+2][4-i] == a[i+3][4-i] == 'R':
+            if a[i][j] == a[i+1][j+1] == a[i+2][j+2] == a[i+3][j+3] == 'R' or a[i][6-j] == a[i+1][5-j] == a[i+2][4-j] == a[i+3][3-j] == 'R':
                 print('Rød har vunnet')
                 return True
-            elif a[i][j] == a[i+1][j+1] == a[i+2][j+2] == a[i+3][j+3] == 'Y' or a[i][6-i] == a[i+1][5-i] == a[i+2][4-i] == a[i+3][4-i] == 'Y':
+            elif a[i][j] == a[i+1][j+1] == a[i+2][j+2] == a[i+3][j+3] == 'Y' or a[i][6-j] == a[i+1][5-j] == a[i+2][4-j] == a[i+3][3-j] == 'Y':
                 print('Gul har vunnet')
                 return True
     return False
