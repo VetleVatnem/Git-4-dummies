@@ -108,7 +108,7 @@ def bonde_hvit(koordinat , brett):
         print('Error executing bonde_hvit')
 
 #TÅRN LOGIKK
-def skann_brett(koordinat , brett , opp , høyre):
+'''def skann_brett(koordinat , brett , opp , høyre):
     x , y = koordinat
     
     if opp == True:
@@ -119,9 +119,9 @@ def skann_brett(koordinat , brett , opp , høyre):
 
     elif høyre == True:
     
-    else:
+    else:'''
 
-def tårn_hvit(koordinat , brett):
+'''def tårn_hvit(koordinat , brett):
     x , y = koordinat
 
     gyldige_trekk = []
@@ -135,7 +135,7 @@ def tårn_hvit(koordinat , brett):
             gyldige_trekk.append((x , y+i))
 
     #Skjekker gyldige trekk i x retning
-    for i in range(7 - x):
+    for i in range(7 - x):'''
 
 #MAIN FUNKSJONER OG HJELPEFUNKSJONER
 #testet OK
