@@ -82,8 +82,8 @@ def not_mutual(D):
     tuppler = []
     for i in range(len(nøkkler)):
         A = nøkkler[i]
-        for j in range(len(D[nøkkler[i]])):
-            B = list(D[nøkkler[i]])[j]
+        for j in range(len(D[A])):
+            B = list(D[A])[j]
 
             if B not in nøkkler or B in D[A] and A not in D[B]:
                 tuppler.append((A,B))
