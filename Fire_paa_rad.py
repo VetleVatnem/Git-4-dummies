@@ -108,15 +108,15 @@ def main():
     skrivut(brett)
     spiller = True
 
-    while True:
-        #try:
+    try:
+        while True:
             brett = plaser_brikke(brett , spiller)
             skrivut(brett)
             ferdig = evaluer(brett)
             spiller = not spiller
             if ferdig:
                 break
-        #except:
-        #    print('heeeell naaah')
+    except:
+        print('heeeell naaah')
     
 main()
