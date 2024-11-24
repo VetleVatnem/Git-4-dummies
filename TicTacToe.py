@@ -7,20 +7,13 @@ def make_board(n):
 def start_UI():
     while True:
         try:
-            spill = int(input('Hvilken type vil du spille?\n1 : Standard\n2 : egendefinert'))
-            
+            spill = int(input('Hvilken type vil du spille?\n1 : Standard\n2 : egendefinert\n'))
             if spill == 1:
-                return True , 3
+                return True
             elif spill == 2:
-                while True:
-                    try:
-                        på_rad = int(input('Hvor mange på rad skal det være?Max er 5'))
-                        if på_rad <= 5:
-                            return False , på_rad
-                    except:
-                        print('du må skrive et heltall...')
+                return False
             else:
-                print('Du må enten trykke "1" eller "2"')
+                print('Du må enten trykke alternativ "1" eller "2"')
         
         except:
             print('Du må skrive heltall')
@@ -40,7 +33,7 @@ def omgjøring(koordinat , dim):
 
     indeks_y = list(range(dim ,-1,-1))
 
-    return (x-1 , indeks_y[y])
+    return x-1 , indeks_y[y]
 
 def spiller_UI(dim):
     while True:
@@ -49,8 +42,9 @@ def spiller_UI(dim):
 
         if len(koordinat) == 2 and koordinat[0] in [str(i+1) for i in range(dim)] and koordinat[1] in [str(i+1) for i in range(dim)]:
             break
-    indeks = omgjøring(koordinat , dim)
-    return indeks
+
+    x , y = omgjøring(koordinat , dim)
+    return x , y
 
 def plasser_brikke(brett , spiller , dim):
     while True:
@@ -67,24 +61,69 @@ def plasser_brikke(brett , spiller , dim):
     
     return brett
 
-def scan_brett(brett , dim):
+def scan_rad(rad , n):
+    
+    for i in range(len(rad)-n+1):
+        x = 1
+        for j in range(n-1):
+            if rad[j+i] == rad[j+i+1] == 'O' or rad[j+i] == rad[j+i+1] == 'X':
+                x += 1
+                spiller = rad[i+j]
+                if x == n:
+                    return True , 'Running' if spiller == 'O' else 'Kryss'
+    
+    return False , '*'             
+
+def scan_brett(brett , dim , n = 3):
     x = dim
     rader = brett
     kolonner = brett.transpose()
-    vinner = np.array([['O','O','O'],['X','X','X']])
+    
     #skjekker rader og kolonner:
     for i in range(x):
-        if np.array_equal(rader[i],vinner[0]) or np.array_equal(kolonner[i],vinner[0]):
-            print('Running vant')
+
+        vunnet_rad , spiller1 = scan_rad(rader[i] , n)
+        vunnet_kol , spiller2 = scan_rad(kolonner[i] , n)
+        
+        if vunnet_rad == True:
+            print(f'{spiller1} vant')
             return True
-        elif np.array_equal(rader[i], vinner[1]) or np.array_equal(kolonner[i],vinner[1]):
-            print('Kryss vant')
+        elif vunnet_kol == True:
+            print(f'{spiller2} vant')
             return True
         
     #skjekker diagonaler:
+    diagonaler = [brett[::-1,:].diagonal(i) for i in range(-x+1,x)]
+    diagonaler.extend(np.fliplr(brett)[::-1,:].diagonal(i) for i in range(-x+1 , x ))
+    
+    for i in range(len(diagonaler)):
+        if len(diagonaler[i]) > n-1:
+            
+            vunnet , spiller = scan_rad(diagonaler[i] , n) 
+            
+            if vunnet == True:  
+                print(f'{spiller} vant')
+                return True
+    
+    return False
+
+def egendefinert_UI():
+    while True:
+        try:
+            dim = int(input('Hvilke dimensjoner skal brettet ha?'))
+            på_rad = int(input('Hvor mange på rad skal det være?'))
+        except:
+            print('Du må skrive inn et heltall')
+        
+        if type(dim) == int and type(på_rad) == int and på_rad <= dim:
+            break
+        else:
+            print('Antall på rad kan ikke være høyere enn dimensjonen på brettet.')
+
+    return dim , på_rad
 
 def main():
-    a , på_rad = start_UI()
+    a = start_UI()
 
     if a == True:
         dim = 3
@@ -101,11 +140,25 @@ def main():
             vinner = scan_brett(brett , dim)
             spiller = not spiller
     else:
+        dim , n = egendefinert_UI()
+        brett = make_board(dim)
+        spiller = True
+        vinner = False
+
         while True:
-            dim = int(input('Hvilke dimensjoner skal brettet ha?'))
-            if type(dim) == int:
+            skrivut(brett)
+
+            if vinner == True:
                 break
+
+            brett = plasser_brikke(brett , spiller , dim)
+            vinner = scan_brett(brett , dim , n)
+            spiller = not spiller        
         
         brett = make_board(dim)
 
 main()
+
+
+
+
